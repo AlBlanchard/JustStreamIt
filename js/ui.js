@@ -1,3 +1,8 @@
+import { PRIMARY_CATEGORY, SECONDARY_CATEGORY, CATEGORY_TRANSLATIONS } from "./constants.js";
+import { navigateTo } from "./router.js";
+import { loadSelectedCategory } from "./router.js";
+
+
 function htmlHeader() {
     const htmlHeader = `
     <img src="../images/juststreamit_logo.svg" alt="Logo JustStreamIt" class="header__logo">
@@ -47,7 +52,7 @@ function htmlFilms(films) {
         <div class="category__film">
             <div class="category__film-banner">
                 <h3 class="category__film-title">${film.title}</h3>
-                <button class="category__film-button" data-id="${film.id}">Détails</button>
+                <button class="category__film-button" onclick="navigateTo('/film/${film.id}')">Détails</button>
             </div>
             <div class="category__image-container">
                 <img src="${film.image_url}" alt="Image de ${film.title}" class="category__image">
@@ -56,23 +61,63 @@ function htmlFilms(films) {
     `).join("");
 };
 
-function htmlDropDown(htmlDropDownOptions) {
-    const htmlDropDown = `
-            <div class="category__selector">
-                <h2 class="section-title">Autres: </h2>
-                <div class="category__dropdown">
-                    <div class="category__dropdown-trigger">
-                        <span class="category__dropdown-selected">Comédies</span> 
-                        <span>▼</span>
-                    </div>
-                    <ul class="category__dropdown-options">
-                        ${htmlDropDownOptions}
-                    </ul>
+/**
+ * Génère le menu déroulant des catégories.
+ * @param {Array} categories - Liste des catégories disponibles.
+ * @returns {string} - HTML du menu déroulant.
+ */
+export function htmlDropDown(categories) {
+    return `
+        <div class="category__selector">
+            <h2 class="section-title">Autres :</h2>
+            <div class="category__dropdown">
+                <div class="category__dropdown-trigger">
+                    <span class="category__dropdown-selected">Sélectionner</span> 
+                    <span>▼</span>
                 </div>
-            </div>`;
+                <ul class="category__dropdown-options">
+                    ${categories.map(category => `
+                        <li class="category__dropdown-option" data-value="${category}">
+                            ${CATEGORY_TRANSLATIONS[category] || category}
+                        </li>`).join("")}
+                </ul>
+            </div>
+        </div>
+    `;
+}
 
-    return htmlDropDown;
-};
+/**
+ * Active les événements du menu déroulant.
+ */
+function activateDropDown() {
+    const trigger = document.querySelector(".category__dropdown-trigger");
+    const options = document.querySelector(".category__dropdown-options");
+
+    if (!trigger || !options) return;
+
+    trigger.addEventListener("click", () => {
+        options.classList.toggle("active");
+    });
+
+    document.querySelectorAll(".category__dropdown-option").forEach(option => {
+        option.addEventListener("click", () => {
+            const selectedCategory = option.dataset.value;
+
+            document.querySelector(".category__dropdown-selected").textContent =
+                CATEGORY_TRANSLATIONS[selectedCategory] || selectedCategory;
+
+            options.classList.remove("active");
+
+            loadSelectedCategory(selectedCategory); // 🔥 Charge les films de la catégorie sélectionnée
+        });
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!trigger.contains(event.target) && !options.contains(event.target)) {
+            options.classList.remove("active");
+        }
+    });
+}
 
 function htmlDropDownOptions() {
     const htmlDropDownOptions = `
@@ -88,14 +133,28 @@ function htmlDropDownOptions() {
 
 };
 
-export function renderHomePage(bestFilm = {}, categoryFilms = []) {
+/**
+ * Affiche la page d'accueil avec les films des deux catégories sélectionnées.
+ * @param {Object} bestFilm - Le meilleur film.
+ * @param {Object} categories - Les films des deux catégories sélectionnées.
+ * @param {Array} allCategories - Toutes les catégories disponibles.
+ */
+/**
+ * Affiche la page d'accueil avec les films des deux catégories sélectionnées et une catégorie dynamique.
+ * @param {Object} bestFilm - Le meilleur film.
+ * @param {Object} categories - Les films des deux catégories principales.
+ * @param {Array} allCategories - Toutes les catégories disponibles.
+ * @param {string} defaultCategory - La catégorie affichée par défaut.
+ * @param {Array} defaultFilms - Les films de la catégorie affichée par défaut.
+ */
+export function renderHomePage(bestFilm = {}, categories = { primary: [], secondary: [] }, allCategories = [], defaultCategory = "", defaultFilms = []) {
     const headerElement = document.querySelector(".header");
     const mainElement = document.querySelector(".main");
 
     if (headerElement) {
         headerElement.innerHTML = htmlHeader();
     } else {
-        console.warn("Elément '.header' non trouvé dans le DOM.");
+        console.warn("Élément '.header' non trouvé dans le DOM.");
     }
 
     if (mainElement) {
@@ -103,44 +162,46 @@ export function renderHomePage(bestFilm = {}, categoryFilms = []) {
             ? htmlBestFilmSection(bestFilm)
             : `<section class="best-film"><p>Aucun meilleur film disponible.</p></section>`;
 
-        const categoryHtml = categoryFilms.length
-            ? htmlCategorySection("Comédies", htmlFilms(categoryFilms))
-            : `<section class="category"><p>Aucune catégorie disponible.</p></section>`;
+        const primaryCategoryHtml = categories.primary.length
+            ? htmlCategorySection(CATEGORY_TRANSLATIONS[PRIMARY_CATEGORY], htmlFilms(categories.primary))
+            : `<section class="category"><p>Aucune donnée disponible pour ${CATEGORY_TRANSLATIONS[PRIMARY_CATEGORY]}.</p></section>`;
+
+        const secondaryCategoryHtml = categories.secondary.length
+            ? htmlCategorySection(CATEGORY_TRANSLATIONS[SECONDARY_CATEGORY], htmlFilms(categories.secondary))
+            : `<section class="category"><p>Aucune donnée disponible pour ${CATEGORY_TRANSLATIONS[SECONDARY_CATEGORY]}.</p></section>`;
+
+        const defaultCategoryHtml = defaultFilms.length
+            ? htmlCategorySection(CATEGORY_TRANSLATIONS[defaultCategory] || defaultCategory, htmlFilms(defaultFilms), "selected-category")
+            : `<section class="category selected-category"><p>Aucune donnée disponible pour ${CATEGORY_TRANSLATIONS[defaultCategory] || defaultCategory}.</p></section>`;
 
         mainElement.innerHTML = `
             ${bestFilmHtml}
-            ${categoryHtml}
-            ${htmlDropDown(htmlDropDownOptions())}
+            ${primaryCategoryHtml}
+            ${secondaryCategoryHtml}
+            ${defaultCategoryHtml}
+            ${htmlDropDown(allCategories)}
         `;
-    } else {
-        console.warn("Elément '.main' non trouvé dans le DOM.");
+
+        activateDropDown();
     }
 }
 
+/**
+ * Affiche une section avec les films d'une catégorie sélectionnée.
+ * @param {string} category - Nom de la catégorie.
+ * @param {Array} films - Liste des films de cette catégorie.
+ */
+export function renderCategorySection(category, films) {
+    const mainElement = document.querySelector(".main");
 
-export function renderMovies(movies) {
-    const container = document.querySelector(".category__list");
-    container.innerHTML = ""; // On vide avant de re-remplir
+    if (!mainElement) {
+        console.warn("Elément '.main' non trouvé dans le DOM.");
+        return;
+    }
 
-    movies.forEach(movie => {
-        const movieElement = document.createElement("div");
-        movieElement.classList.add("category__item");
-        movieElement.innerHTML = `
-            <div class="category__banner">
-                <h3 class="category__title">${movie.title}</h3>
-                <button class="category__button" data-id="${movie.id}">Détails</button>
-            </div>
-            <div class="category__image-container">
-                <img src="${movie.image}" alt="${movie.title}" class="category__image">
-            </div>
-        `;
-        container.appendChild(movieElement);
-    });
+    const categoryHtml = films.length
+        ? htmlCategorySection(CATEGORY_TRANSLATIONS[category] || category, htmlFilms(films))
+        : `<section class="category"><p>Aucune donnée disponible pour ${CATEGORY_TRANSLATIONS[category] || category}.</p></section>`;
 
-    // Ajoute les événements sur les boutons "Détails"
-    document.querySelectorAll(".category__button").forEach(button => {
-        button.addEventListener("click", () => {
-            window.location.hash = `#film/${button.dataset.id}`;
-        });
-    });
-};
+    mainElement.innerHTML = categoryHtml;
+}

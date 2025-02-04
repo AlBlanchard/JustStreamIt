@@ -90,7 +90,7 @@ button{
     align-items: center;
 
     img {
-        max-width: 100%;
+        width: 100%;
     }
 }
 
@@ -152,6 +152,7 @@ button{
 .category__film {
     position: relative;
     aspect-ratio: 1/1;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -263,6 +264,7 @@ button{
 }
     
 .category__dropdown-selected {
+    white-space: nowrap;
     overflow: hidden; 
     text-overflow: ellipsis;
 }
@@ -277,15 +279,16 @@ button{
                 background: white;
                 border: 1px solid #ccc;
                 list-style: none;
-                padding: 0;
                 margin: 0;
                 box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.category__dropdown-option {
                 padding: 10px;
                 cursor: pointer;
                 transition: background 0.3s;
+}
+
+
+.category__dropdown-options.active {
+    display: block; /* 🔥 Le menu apparaît quand il a la classe active */
 }
             
 .category__dropdown-option:hover {
