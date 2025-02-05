@@ -1,4 +1,4 @@
-import { API_BASE_URL, PRIMARY_CATEGORY, SECONDARY_CATEGORY } from "./constants.js";
+import { API_BASE_URL, PRIMARY_CATEGORY, SECONDARY_CATEGORY, DEFAULT_CATEGORY_DROPDOWN } from "./constants.js";
 
 /**
  * Effectue une requête GET sur une URL donnée.
@@ -55,12 +55,13 @@ export async function fetchTopRatedFilmsByCategory(category) {
  * @returns {Promise<{primary: Array, secondary: Array}>}
  */
 export async function fetchHomeCategories() {
-    const [primaryFilms, secondaryFilms] = await Promise.all([
+    const [primaryFilms, secondaryFilms, customPlaceholderFilms] = await Promise.all([
         fetchTopRatedFilmsByCategory(PRIMARY_CATEGORY),
-        fetchTopRatedFilmsByCategory(SECONDARY_CATEGORY)
+        fetchTopRatedFilmsByCategory(SECONDARY_CATEGORY),
+        fetchTopRatedFilmsByCategory(DEFAULT_CATEGORY_DROPDOWN)
     ]);
 
-    return { primary: primaryFilms, secondary: secondaryFilms };
+    return { primary: primaryFilms, secondary: secondaryFilms, custom: customPlaceholderFilms};
 }
 
 /**

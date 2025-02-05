@@ -1,6 +1,5 @@
 import { fetchBestFilm, fetchHomeCategories, fetchCategories, fetchTopRatedFilmsByCategory } from "./api.js";
-import { renderHomePage, renderCategorySection } from "./ui.js";
-import { CATEGORY_TRANSLATIONS } from "./constants.js";
+import { renderHomePage, htmlFilms, setupSeeMoreButtons } from "./ui.js";
 
 const DEFAULT_CATEGORY = "Adventure";
 
@@ -21,11 +20,13 @@ async function loadHomePage() {
 }
 
 /**
- * Met à jour la liste des films de la catégorie sélectionnée dans `.category--custom`.
+ * Met à jour la liste des films de la catégorie sélectionnée via une requête API.
  * @param {string} categoryName - Nom de la catégorie sélectionnée.
  */
 export async function loadSelectedCategory(categoryName) {
     try {
+        console.log(`Chargement des films pour la catégorie : ${categoryName}`);
+
         const films = await fetchTopRatedFilmsByCategory(categoryName);
         const categoryContainer = document.querySelector(".category--custom .category__film-list");
 
@@ -34,10 +35,12 @@ export async function loadSelectedCategory(categoryName) {
             return;
         }
 
-        // Remplace le contenu avec les nouveaux films
+        // Remplace le contenu avec les nouveaux films récupérés via l'API
         categoryContainer.innerHTML = films.length
-            ? htmlFilms(films) + `<button class="category__see-more">Voir plus</button>`
+            ? htmlFilms(films) + `<button class="category__see-more visible">Voir plus</button>` + `<button class="category__see-less">Voir moins</button>`
             : `<p>Aucun film disponible pour cette catégorie.</p>`;
+
+        setupSeeMoreButtons();
 
     } catch (error) {
         console.error(`Erreur lors du chargement de la catégorie ${categoryName} :`, error);

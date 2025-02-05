@@ -4,6 +4,7 @@ export const API_BASE_URL = "http://localhost:8000/api/v1";
 // Catégories choisies pour la page d'accueil
 export const PRIMARY_CATEGORY = "Comedy";
 export const SECONDARY_CATEGORY = "Sci-Fi";
+export const DEFAULT_CATEGORY_DROPDOWN = "Action";
 
 // Traductions des catégories
 export const CATEGORY_TRANSLATIONS = {
