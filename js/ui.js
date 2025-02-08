@@ -23,7 +23,7 @@ function htmlBestFilmSection(bestFilm) {
                 <div class="best-film__description">
                     <h3 class="best-film__title">${bestFilm.title}</h3>
                     <p class="best-film__synopsis">${bestFilm.description}</p>
-                    <button class="best-film__button" data-id="${bestFilm.id}">Détails</button>
+                    <button class="best-film__button" data-id="${bestFilm.id}" onclick="showFilmDetails(${bestFilm.id})">Détails</button>
                 </div>
             </article>
         </section>
@@ -50,7 +50,7 @@ export function htmlFilms(films) {
         <div class="category__film ${index < 2 ? "visible" : ""}">
             <div class="category__film-banner">
                 <h3 class="category__film-title">${film.title}</h3>
-                <button class="category__film-button" onclick="navigateTo('/film/${film.id}')">Détails</button>
+                <button class="category__film-button" onclick="showFilmDetails(${film.id})">Détails</button>
             </div>
             <div class="category__image-container">
                 <img src="${film.image_url}" 
@@ -159,9 +159,8 @@ function activateDropDown() {
  * @param {Object} bestFilm - Le meilleur film.
  * @param {Object} categories - Les films des deux catégories principales.
  * @param {Array} allCategories - Toutes les catégories disponibles.
- * @param {Array} defaultFilms - Les films de la catégorie affichée par défaut.
  */
-export function renderHomePage(bestFilm = {}, categories = { primary: [], secondary: [], custom:[] }, allCategories = [], defaultCategory = "", defaultFilms = []) {
+export function renderHomePage(bestFilm = {}, categories = { primary: [], secondary: [], custom:[] }, allCategories = []) {
     const headerElement = document.querySelector(".header");
     const mainElement = document.querySelector(".main");
 
@@ -249,3 +248,4 @@ export function setupSeeMoreButtons() {
         });
     });
 }
+

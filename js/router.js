@@ -1,7 +1,6 @@
-import { fetchBestFilm, fetchHomeCategories, fetchCategories, fetchTopRatedFilmsByCategory } from "./api.js";
+import { fetchBestFilm, fetchHomeCategories, fetchCategories, fetchTopRatedFilmsByCategory, fetchMovieDetails } from "./api.js";
 import { renderHomePage, htmlFilms, setupSeeMoreButtons } from "./ui.js";
-
-const DEFAULT_CATEGORY = "Adventure";
+import { FilmModal } from "./filmModal.js";
 
 /**
  * Charge la page d'accueil avec toutes les données nécessaires.
@@ -11,9 +10,8 @@ async function loadHomePage() {
         const bestFilm = await fetchBestFilm();
         const categories = await fetchHomeCategories();
         const allCategories = await fetchCategories();
-        const defaultFilms = await fetchTopRatedFilmsByCategory(DEFAULT_CATEGORY);
 
-        renderHomePage(bestFilm, categories, allCategories, DEFAULT_CATEGORY, defaultFilms);
+        renderHomePage(bestFilm, categories, allCategories);
     } catch (error) {
         console.error("Erreur lors du chargement de la page d'accueil :", error);
     }
@@ -60,22 +58,27 @@ export function router() {
     }
 }
 
-/**
- * Change l'URL sans recharger la page et exécute le routeur.
- * @param {string} path - Le chemin de la nouvelle page.
- */
-export function navigateTo(path) {
-    window.history.pushState({}, "", path);
-    router();
+const modal = new FilmModal();
+
+async function showFilmDetails(filmId) {
+    try {
+        const film = await fetchMovieDetails(filmId); 
+        if (!film) throw new Error("Aucune donnée reçue pour ce film.");
+
+        modal.show(film); 
+    } catch (error) {
+        console.error("Erreur lors de la récupération des détails du film :", error);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", router);
 window.addEventListener("popstate", router);
+window.showFilmDetails = showFilmDetails; // Essentiel pour le modal, rend accessible la fonction showFilmDetails dans le contexte global
 
 document.addEventListener("click", (event) => {
     const target = event.target.closest("a");
     if (target && target.href.startsWith(window.location.origin)) {
         event.preventDefault(); // Empêche le chargement de la page
-        navigateTo(new URL(target.href).pathname);
+        openModal(new URL(target.href).pathname);
     }
 });

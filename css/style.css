@@ -311,9 +311,103 @@ button{
 
 
 .category__dropdown-options.active {
-    display: block; /* 🔥 Le menu apparaît quand il a la classe active */
+    display: block; /* Le menu apparaît quand il a la classe active */
 }
             
 .category__dropdown-option:hover {
     background: #e0e0e0;
 }
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; 
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: flex-start;
+    z-index: 1000;
+    overflow-y: auto; 
+    padding: 20px;
+}
+
+.modal__content {
+    background: white;
+    width: 90vw;
+    max-width: 600px;
+    min-height: 100vh; 
+    border: 6px solid black;
+    padding: 28px 28px 28px 28px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal__details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 36px;
+}
+
+.modal__header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal__header-infos {
+    font-weight: 600;
+    flex: 1 1 auto;
+    min-width: 0; /* Force l'ellipsis des flexbox */
+
+    h2 {
+        line-height: 72px;
+        font-size: 48px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.modal__cross {
+    align-self: flex-start;
+    font-size: 32px;
+    cursor: pointer;
+    background-color: white;
+    padding: 0;
+}
+
+.modal__realisator {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal__description {
+    margin-bottom: 16px;
+}
+
+.modal__image {
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+}
+
+.modal__info {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
