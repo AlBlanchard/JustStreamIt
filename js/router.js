@@ -33,17 +33,28 @@ export async function loadSelectedCategory(categoryName) {
             return;
         }
 
-        // Remplace le contenu avec les nouveaux films récupérés via l'API
+        // Remettre la liste dans son état initial avant d'afficher les nouveaux films
         categoryContainer.innerHTML = films.length
-            ? htmlFilms(films) + `<button class="category__see-more visible">Voir plus</button>` + `<button class="category__see-less">Voir moins</button>`
+            ? htmlFilms(films)
             : `<p>Aucun film disponible pour cette catégorie.</p>`;
 
+        // Réinitialiser les boutons "Voir plus" et "Voir moins"
+        const seeMoreButton = document.querySelector(".category--custom .category__see-more");
+        const seeLessButton = document.querySelector(".category--custom .category__see-less");
+
+        if (seeMoreButton && seeLessButton) {
+            seeMoreButton.classList.add("visible"); // Remet "Voir plus" actif
+            seeLessButton.classList.remove("visible"); // Cache "Voir moins"
+        }
+
+        // Reconfigurer la gestion des boutons après mise à jour
         setupSeeMoreButtons();
 
     } catch (error) {
         console.error(`Erreur lors du chargement de la catégorie ${categoryName} :`, error);
     }
 }
+
 
 
 

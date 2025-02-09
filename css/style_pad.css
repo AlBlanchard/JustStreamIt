@@ -1,0 +1,68 @@
+body {
+    margin: 5% 10%;
+}
+
+.header{
+    justify-content: flex-start;
+    align-items: center;
+    padding: 8px 20px;
+}
+
+.section-title {
+    justify-content: flex-start;
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.header__title {
+    display: block;
+    font-size: 40px;
+    font-weight: 300;
+    color: white;
+    margin-left: 54px;
+}
+
+/* Best Film */
+.best-film__article {
+    flex-direction: row;
+    aspect-ratio: unset;
+}
+
+.best-film__title {
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.best-film__description {
+    margin-left: 26px;
+}
+
+.best-film__synopsis {
+    font-size: 24px;
+    font-weight: 200;
+    line-height: 36px;
+}
+
+.best-film__image-container {
+    aspect-ratio: unset;
+}
+
+.best-film__button {
+    align-self: self-end;
+    height: 49px;
+    width: 123px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+/* Catégories */
+.category__film-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    
+}
+
+.category__film {
+    max-width: 48%;
+}

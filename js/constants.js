@@ -6,6 +6,15 @@ export const PRIMARY_CATEGORY = "Comedy";
 export const SECONDARY_CATEGORY = "Sci-Fi";
 export const DEFAULT_CATEGORY_DROPDOWN = "Action";
 
+// Breakpoints pour le responsive
+export const PAD_BREAKPOINT = 668;
+export const DESKTOP_BREAKPOINT = 1024;
+
+// Nombres de films initialement visibles pour chaque port
+export const PHONE_FILMS = 2;
+export const PAD_FILMS = 4;
+export const DESKTOP_FILMS = 6;
+
 // Traductions des catégories
 export const CATEGORY_TRANSLATIONS = {
     "Action": "Action",

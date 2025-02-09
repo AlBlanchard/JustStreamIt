@@ -175,12 +175,11 @@ button{
 /* Films supplémentaires cachés */
 .category__film:not(.visible) {
     display: none;
-    transition: opacity 0.3s ease-out, display 0.3s step-end; /* Empêche un saut */
+    transition: opacity 0.3s ease-out, display 0.3s step-end; /* Step-end empêche un saut */
     display: none;
 }
 
 .category__film.visible {
-    opacity: 1;
     display: block;
 }
 
