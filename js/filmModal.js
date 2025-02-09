@@ -42,6 +42,9 @@ export class FilmModal {
         this.modal.addEventListener("click", (event) => {
             if (event.target === this.modal) this.hide();
         });
+
+        // Permet le scroll interne du modal
+        this.modal.style.overflowY = "auto";
     }
 
     /**
@@ -53,7 +56,10 @@ export class FilmModal {
         const ratedValue = film.rated && !isNaN(film.rated) ? film.rated : "(Non classé)";
         const filmCountries = film.countries ? `(${film.countries.join(" / ")})` : "Non spécifié";
 
-        this.modal.scrollTop = 0; // Réinitialise la position du scroll du modal
+        // 🔥 Réinitialisation du scroll AVANT d'afficher le modal
+        this.modal.scrollTop = 0; 
+        this.modalContent.scrollTop = 0;
+
         this.modal.querySelector(".modal__title").textContent = film.title;
         this.modal.querySelector(".modal__image").src = film.image_url;
         this.modal.querySelector(".modal__description").textContent = film.long_description || "Aucune description disponible.";
@@ -68,10 +74,22 @@ export class FilmModal {
 
         this.modal.style.display = "flex";
         document.body.style.overflow = "hidden"; // Désactive le scroll du body
+
+        // Forcer la réinitialisation après l'affichage
+        setTimeout(() => {
+            this.modal.scrollTop = 0;
+            this.modalContent.scrollTop = 0;
+        }, 10);
     }
 
     hide() {
-        this.modal.style.display = "none";
-        document.body.style.overflow = ""; // Réactive le scroll du body
+        this.modal.classList.add("closing"); // Ajoute la classe pour lancer l'animation de fermeture
+    
+        // Attend la fin de l'animation avant de cacher complètement le modal
+        this.modal.addEventListener("animationend", () => {
+            this.modal.style.display = "none";
+            this.modal.classList.remove("closing"); // Retire la classe pour la prochaine ouverture
+            document.body.style.overflow = ""; // Réactive le scroll du body
+        }, { once: true }); // L'événement ne s'exécute qu'une seule fois
     }
 }

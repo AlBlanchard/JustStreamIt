@@ -38,19 +38,19 @@ export function htmlCategorySection(categoryTitle, htmlFilms) {
             <h2 class="section-title">${categoryTitle}</h2>
             <article class="category__film-list">
                 ${htmlFilms}
-                <button class="category__see-more visible">Voir plus</button>
-                <button class="category__see-less">Voir moins</button>
             </article>
+            <button class="category__button category__see-more visible">Voir plus</button>
+            <button class="category__button category__see-less">Voir moins</button>
         </section>
     `;
 }
 
 export function htmlFilms(films) {
     return films.map((film, index) => `
-        <div class="category__film ${index < 2 ? "visible" : ""}">
+        <div class="category__film ${index < 2 ? "visible" : ""}" onclick="showFilmDetails(${film.id})">
             <div class="category__film-banner">
                 <h3 class="category__film-title">${film.title}</h3>
-                <button class="category__film-button" onclick="showFilmDetails(${film.id})">Détails</button>
+                <button class="category__film-button" onclick="event.stopPropagation(); showFilmDetails(${film.id})">Détails</button>
             </div>
             <div class="category__image-container">
                 <img src="${film.image_url}" 
@@ -61,6 +61,7 @@ export function htmlFilms(films) {
         </div>
     `).join("");
 }
+
 
 /**
  * Génère le menu déroulant des catégories.
@@ -94,9 +95,9 @@ function htmlCategoryCustom(allCategories, htmlFilmsInitial) {
                             
             <article class="category__film-list">
                 ${htmlFilmsInitial}
-                <button class="category__see-more visible">Voir plus</button>
-                <button class="category__see-less">Voir moins</button>
             </article>
+            <button class="category__button category__see-more visible">Voir plus</button>
+            <button class="category__button category__see-less">Voir moins</button>
         </section>
         `;
 };
@@ -219,12 +220,81 @@ export function renderCategorySection(category, films) {
     mainElement.innerHTML = categoryHtml;
 }
 
+/**
+ * Anime l'ouverture de la liste des films
+ * @param {HTMLElement} filmList - L'élément contenant les films
+ */
+function expandList(filmList) {
+    // Récupérer la hauteur actuelle (avec seulement les films visibles)
+    const initialHeight = filmList.offsetHeight;
+    filmList.style.maxHeight = `${initialHeight}px`; // Empêche un "saut" au début
+
+    requestAnimationFrame(() => {
+        // Ajouter .visible aux films cachés APRÈS avoir fixé la hauteur
+        filmList.querySelectorAll(".category__film:not(.visible)").forEach(film => {
+            film.classList.add("visible");
+        });
+
+        // Forcer un recalcul pour éviter que la transition soit ignorée
+        requestAnimationFrame(() => {
+            const newHeight = filmList.scrollHeight; // Nouvelle hauteur après apparition des films
+            filmList.style.maxHeight = `${newHeight}px`;
+
+            setTimeout(() => {
+                filmList.style.maxHeight = "none"; // Supprime max-height après l'animation
+            }, 1000); // Temps correspondant à la transition CSS
+        });
+    });
+}
+
+
+/**
+ * Anime la fermeture de la liste des films
+ * @param {HTMLElement} filmList - L'élément contenant les films
+ * @param {number} visibleCount - Nombre de films à garder visibles
+ */
+function collapseList(filmList, visibleCount) {
+    // Récupérer la hauteur actuelle AVANT la fermeture
+    const initialHeight = filmList.offsetHeight;
+    filmList.style.maxHeight = `${initialHeight}px`; // 🔹 Fixe la hauteur pour éviter un saut
+
+    requestAnimationFrame(() => {
+        // Supprimer .visible APRÈS la transition de hauteur
+        const hiddenFilms = Array.from(filmList.querySelectorAll(".category__film")).slice(visibleCount);
+
+        // Calculer précisément la nouvelle hauteur (somme des films visibles + marges)
+        const visibleFilms = [...filmList.children].slice(0, visibleCount);
+        const newHeight = visibleFilms.reduce((total, film) => {
+            const styles = window.getComputedStyle(film);
+            const marginBottom = parseFloat(styles.marginBottom); // 🔹 Prendre en compte la marge
+            return total + film.offsetHeight + marginBottom;
+        }, 0);
+
+        filmList.style.maxHeight = `${newHeight}px`;
+
+        // Attendre la fin de la transition AVANT de masquer les films
+        setTimeout(() => {
+            hiddenFilms.forEach(film => film.classList.remove("visible"));
+
+            // Fixer max-height pour éviter un ajustement brutal
+            requestAnimationFrame(() => {
+                filmList.style.maxHeight = `${newHeight}px`;
+            });
+        }, 1000); // Temps correspondant à la transition CSS
+    });
+}
+
+
+
+/**
+ * Configure les boutons "Voir plus" et "Voir moins"
+ */
 export function setupSeeMoreButtons() {
     document.querySelectorAll(".category").forEach(category => {
         const seeMoreButton = category.querySelector(".category__see-more");
         const seeLessButton = category.querySelector(".category__see-less");
         const films = category.querySelectorAll(".category__film");
-
+        const filmList = category.querySelector(".category__film-list");
         const visibleCount = 2; // Nombre de films visibles par défaut
 
         if (films.length <= visibleCount) {
@@ -232,20 +302,19 @@ export function setupSeeMoreButtons() {
         }
 
         seeMoreButton.addEventListener("click", () => {
-            films.forEach(film => film.classList.add("visible")); // Affiche tous les films
+            expandList(filmList);
             seeMoreButton.classList.remove("visible"); // Cache "Voir plus"
-            seeLessButton.classList.add("visible"); // Montre "Voir moins"
+            seeLessButton.classList.add("visible"); // Affiche "Voir moins"
         });
 
         seeLessButton.addEventListener("click", () => {
-            films.forEach((film, index) => {
-                if (index >= visibleCount) {
-                    film.classList.remove("visible"); // Cache les films en trop
-                }
-            });
-            seeMoreButton.classList.add("visible"); // Réaffiche "Voir plus"
+            collapseList(filmList, visibleCount);
+            seeMoreButton.classList.add("visible"); // Affiche "Voir plus"
             seeLessButton.classList.remove("visible"); // Cache "Voir moins"
         });
     });
 }
+
+
+
 
