@@ -5,15 +5,21 @@
 html {
     /*  max-width: 667px; BP 667px -> 668px 1023px -> 1024px  */
     margin: auto;
+    width: 100vw;
+    overflow-x: hidden;
 }
 
-
 body { 
-    margin: 10% 14%;
+    margin: auto;
     font-family : 'Oswald';
 }
 
+header {
+    margin: 10% 14% 0 14%;
+}
+
 main {
+    margin: 0 14% 10% 14%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -127,6 +133,12 @@ button{
     color: white;
     align-self: center;
     border-radius: 25px;
+    cursor: pointer;
+}
+
+.best-film__button:hover {
+    background-color: hsl(0, 100%, 72%);
+    transition: background-color 0.3s;
 }
 
 /* CATEGORIES */
@@ -166,10 +178,11 @@ button{
     display: none;
     transition: transform 0.3s ease-in-out;
     transition: opacity 0.3s ease-out;
+    cursor: pointer;
 }
 
 .category__film:hover {
-    transform: scale(1.03);
+    opacity: 0.8;
 }
 
 /* Films supplémentaires cachés */
@@ -211,6 +224,7 @@ button{
     font-size: 14px;
     color: white;
     background-color: #2D2C2C;
+    cursor: pointer;
 }
 
 
@@ -242,6 +256,12 @@ button{
     display: none;
     align-self: center;
     margin-top: 26px;
+    cursor: pointer;
+}
+
+.category__button:hover {
+    background-color: hsl(0, 100%, 72%);
+    transition: background-color 0.3s;
 }
 
 .category__see-more.visible {
@@ -290,6 +310,10 @@ button{
     font-size: 36px;     
     font-weight: 600;
 }
+
+.category__dropdown-trigger:hover{
+    background: #E7E7E7;
+}
     
 .category__dropdown-selected {
     white-space: nowrap;
@@ -320,6 +344,9 @@ button{
                     font-size: 32px;
                     font-weight: 600;
                     padding-left: 10px;
+                    white-space: nowrap;
+                    overflow: hidden; 
+                    text-overflow: ellipsis;
                 }
 }
 
@@ -329,7 +356,7 @@ button{
 }
             
 .category__dropdown-option:hover {
-    background: #e0e0e0;
+    background: #E7E7E7;
 }
 
 /* MODAL */

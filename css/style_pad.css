@@ -1,5 +1,9 @@
-body {
-    margin: 5% 10%;
+header {
+    margin: 5% 10% 0 10%;
+}
+
+main {
+    margin: 0 10% 5% 10%;
 }
 
 .header{
@@ -12,6 +16,7 @@ body {
     justify-content: flex-start;
     font-size: 40px;
     font-weight: 600;
+    margin-bottom: 16px;
 }
 
 .header__title {
@@ -23,6 +28,10 @@ body {
 }
 
 /* Best Film */
+.best-film {
+    margin-bottom: 24px;
+}
+
 .best-film__article {
     flex-direction: row;
     aspect-ratio: unset;
@@ -59,10 +68,44 @@ body {
 .category__film-list {
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 20px;
-    
+    gap: 30px 4%;
 }
 
 .category__film {
     max-width: 48%;
+}
+
+.category__selector {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .section-title {
+        display: block;
+        margin-bottom: 0;
+    }
+}
+
+.category__dropdown{
+    width: 242px;
+    height: 60px;
+    margin-left: 18px;
+}
+
+.category__dropdown-trigger {
+    width: 100%;
+    height: 100%;
+
+    span:nth-child(2) { /* Enlève le ▼ */
+        display: none;
+    }
+}
+
+.category__dropdown-options {
+    width: 100%;
+
+    li {
+        height: 80px;
+    }
 }

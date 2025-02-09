@@ -73,7 +73,7 @@ export class FilmModal {
         this.modal.querySelector(".modal__actors").textContent = film.actors.slice(0, 5).join(", ");
 
         this.modal.style.display = "flex";
-        document.body.style.overflow = "hidden"; // Désactive le scroll du body
+        document.documentElement.style.overflow = "hidden"; // Désactive le scroll du body
 
         // Forcer la réinitialisation après l'affichage
         setTimeout(() => {
@@ -89,7 +89,7 @@ export class FilmModal {
         this.modal.addEventListener("animationend", () => {
             this.modal.style.display = "none";
             this.modal.classList.remove("closing"); // Retire la classe pour la prochaine ouverture
-            document.body.style.overflow = ""; // Réactive le scroll du body
+            document.documentElement.style.overflow = ""; // Réactive le scroll du body
         }, { once: true }); // L'événement ne s'exécute qu'une seule fois
     }
 }

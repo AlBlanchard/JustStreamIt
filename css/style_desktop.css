@@ -1,0 +1,18 @@
+/* Catégories */
+body { 
+    max-width: 1680px;
+}
+
+.category__film-list {
+    gap: 30px 2%;
+}
+
+.category__film {
+    width: 32%;
+}
+
+.category__dropdown{
+    width: 400px;
+    height: 80px;
+    margin-left: 18px;
+}

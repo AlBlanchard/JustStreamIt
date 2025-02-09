@@ -96,7 +96,7 @@ export function htmlFilms(films) {
 function htmlDropDown(allCategories) {
     return `
         <div class="category__selector">
-            <h2 class="section-title">Autres :</h2>
+            <h2 class="section-title">Autres:</h2>
             <div class="category__dropdown">
                 <div class="category__dropdown-trigger">
                     <span class="category__dropdown-selected">${CATEGORY_TRANSLATIONS[DEFAULT_CATEGORY_DROPDOWN] || DEFAULT_CATEGORY_DROPDOWN}</span> 
@@ -276,56 +276,45 @@ function expandList(filmList) {
 /**
  * Anime la fermeture de la liste des films
  * @param {HTMLElement} filmList - L'élément contenant les films
- * @param {number} visibleCount - Nombre de films à garder visibles
  */
-function collapseList(filmList, visibleCount) {
+function collapseList(filmList) {
     console.log("⏬ Début de l'animation de fermeture");
 
-    // 🔹 Étape 1 : Récupérer la hauteur actuelle avant de modifier la liste
-    const initialHeight = filmList.offsetHeight;
-    filmList.style.maxHeight = `${initialHeight}px`; // 🔒 Fixe la hauteur pour éviter un "saut"
+    // 🔹 Étape 1 : Hauteur fixe (2 films + gap) → Peu importe la taille d'écran
+    const sampleFilm = filmList.querySelector(".category__film");
+    if (!sampleFilm) return; // Sécurité si aucun film
+
+    const filmStyles = window.getComputedStyle(sampleFilm);
+    const filmHeight = sampleFilm.offsetHeight;
+    const marginBottom = parseFloat(filmStyles.marginBottom) || 0;
+    const gap = parseFloat(window.getComputedStyle(filmList).gap) || 0;
+
+    const initialHeight = (filmHeight + marginBottom) * 2 + gap;
+    filmList.style.maxHeight = `${filmList.offsetHeight}px`; // 🔒 Fixe la hauteur avant transition
 
     requestAnimationFrame(() => {
-        const allFilms = Array.from(filmList.querySelectorAll(".category__film"));
-        const hiddenFilms = allFilms.slice(visibleCount); // Films à masquer
-        const visibleFilms = allFilms.slice(0, visibleCount); // Films à garder visibles
+        // 🔹 Étape 2 : Récupérer combien de films doivent rester visibles
+        const visibleCount = getVisibleFilmCount(); // 📌 Dynamique selon la taille de l'écran
 
-        // 🔹 Étape 2 : Calcul précis de la hauteur totale des films visibles
-        let adjustedHeight = 0;
-        visibleFilms.forEach(film => {
-            const styles = window.getComputedStyle(film);
-            const marginBottom = parseFloat(styles.marginBottom) || 0;
-            adjustedHeight += film.offsetHeight + marginBottom;
-        });
+        console.log(`📏 Hauteur ajustée pour ${visibleCount} films : ${initialHeight}px`);
 
-        // 🔹 🔥 Correction de l'erreur de 27.94px
-        const computedStyles = window.getComputedStyle(filmList);
-        const gap = parseFloat(computedStyles.gap) || 0; // ✅ Prise en compte du gap du flexbox
-
-        adjustedHeight = Math.ceil(adjustedHeight + gap); // ✅ Ajout du gap pour compenser
-
-        console.log("📏 Hauteur ajustée exacte :", adjustedHeight, "px");
-
-        // 🔹 Étape 3 : Appliquer la transition fluide
+        // 🔹 Étape 3 : Lancer l'animation de réduction
         filmList.style.transition = "max-height 1s ease-out";
-        filmList.style.maxHeight = `${adjustedHeight}px`;
+        filmList.style.maxHeight = `${initialHeight}px`;
 
         // 🔹 Étape 4 : Attendre la fin de la transition avant de masquer les films
         setTimeout(() => {
-            hiddenFilms.forEach(film => film.classList.remove("visible"));
+            filmList.querySelectorAll(`.category__film:nth-child(n+${visibleCount + 1})`).forEach(film => {
+                film.classList.remove("visible"); // Cache les films après les visibles
+            });
 
             requestAnimationFrame(() => {
                 filmList.style.transition = ""; // ✅ Reset pour éviter les glitchs
-                filmList.style.maxHeight = "none"; // ✅ Suppressi*on du max-height après transition
+                filmList.style.maxHeight = "none"; // ✅ Supprime la restriction après transition
             });
-        }, 1000); // ✅ Synchronisé avec la transition CSS OK
+        }, 1000); // Durée synchronisée avec la transition CSS
     });
 }
-
-
-
-
-
 
 /**
  * Configure les boutons "Voir plus" et "Voir moins"
@@ -358,41 +347,50 @@ export function setupSeeMoreButtons() {
 
 function updateVisibleFilms() {
     document.querySelectorAll(".category").forEach(category => {
-        const films = category.querySelectorAll(".category__film");
+        const filmList = category.querySelector(".category__film-list");
         const seeMoreButton = category.querySelector(".category__see-more");
         const seeLessButton = category.querySelector(".category__see-less");
+        const films = [...category.querySelectorAll(".category__film")];
+
+        if (!filmList || !seeMoreButton || !seeLessButton) return;
 
         const visibleCount = getVisibleFilmCount();
-        const isExpanded = seeLessButton?.classList.contains("visible"); // Vérifie si la liste est ouverte
+        const isExpanded = seeLessButton.classList.contains("visible"); // Vérifie si la liste est ouverte
 
+        // 🔹 Mettre à jour les classes visibles
         films.forEach((film, index) => {
             if (index < visibleCount) {
-                film.classList.add("visible"); // ✅ Affiche les films
+                film.classList.add("visible");
             } else {
-                film.classList.remove("visible"); // ❌ Cache les films
+                film.classList.remove("visible");
             }
         });
 
-        // Desktop : On affiche 6 films, mais on empêche "Voir moins" et "voir plus" d’apparaître
-        if (visibleCount === DESKTOP_FILMS) {
-            seeMoreButton.classList.remove("visible");
-            seeLessButton.classList.remove("visible");
-        } 
-        // Mode Mobile/Tablette : Fonctionnement normal de "Voir plus / Voir moins"
-        else {
-            if (films.length > visibleCount && !isExpanded) {
+        // 🔹 Réinitialisation des boutons selon le mode actuel
+        if (films.length > visibleCount) {
+            if (isExpanded) {
+                // Si "Voir moins" est actif mais qu'on change de breakpoint, fermer proprement la liste
+                collapseList(filmList);
+                seeLessButton.classList.remove("visible");
+                seeMoreButton.classList.add("visible");
+            } else {
+                // Mode normal : "Voir plus" doit être visible si des films sont cachés
                 seeMoreButton.classList.add("visible");
                 seeLessButton.classList.remove("visible");
-            } else {
-                seeMoreButton.classList.remove("visible");
-                seeLessButton.classList.add("visible");
             }
+        } else {
+            // Si tous les films sont visibles dès le début, on cache les boutons
+            seeMoreButton.classList.remove("visible");
+            seeLessButton.classList.remove("visible");
         }
     });
+
+    setupSeeMoreButtons(); // ✅ S'assure que les événements sont bien actifs
 }
 
-updateVisibleFilms();
+// Ajoute l'écouteur d'événement pour réagir aux changements de taille
 window.addEventListener("resize", updateVisibleFilms);
+updateVisibleFilms();
 
 
 
