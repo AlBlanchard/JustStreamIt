@@ -1,8 +1,27 @@
-/* Catégories */
 body { 
     max-width: 1680px;
 }
 
+/* HEADER */
+.header{
+    padding: 16px 20px;
+}
+
+/* Meilleur Film */
+.best-film__article {
+    max-height: 370px;
+}
+
+.best-film__image-container {
+    height: 100%;
+    width: auto;
+
+    img{
+        height: 100%;
+    }
+}
+
+/* Catégories */
 .category__film-list {
     gap: 30px 2%;
 }
@@ -15,4 +34,88 @@ body {
     width: 400px;
     height: 80px;
     margin-left: 18px;
+}
+
+/* MODAL */
+.modal__content {
+    width: 75%;
+    max-width: 1300px;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.modal__details {
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 100%;
+}
+
+.modal__header {
+    width: 65%;
+    order: 1;
+
+    h2 {
+        white-space: wrap;
+        overflow: auto;
+        text-overflow:clip;
+    }
+}
+
+.modal__image-wrapper {
+    width: 32%;
+    height: auto;
+    margin: 0;
+    flex-shrink: 0;
+    order: 2;
+}
+
+.modal__image {
+    width: 100%;
+    height: auto;
+}
+
+.modal__description {
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    order: 3;
+}
+
+.modal__cast {
+    width: 100%;
+    order: 4;
+}
+
+.modal__button-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: flex-end;
+    order : 5;
+}
+
+.modal__close-button {
+    width: 100%;
+    max-width: 214px;
+    height: 36px;
+    margin-top: 36px;
+    background-color: #FA0B0B;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    align-self: center;
+    cursor: pointer;
+}
+
+.modal__close-button:hover {
+    background-color: hsl(0, 100%, 72%);
+    transition: background-color 0.3s;
+}
+
+.modal__cross {
+    display: none;
 }

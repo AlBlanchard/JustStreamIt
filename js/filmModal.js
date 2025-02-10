@@ -12,22 +12,30 @@ export class FilmModal {
                             <div><span class="modal__year"></span> - <span class="modal__genre"></span></div>
                             <div>PG-<span class="modal__PG"></span> - <span class="modal__duration"></span> <span class="modal__country"></span></div>
                             <div>IMDB score: <span class="modal__score"></span>/10</div>
+
+                            <div class="modal__realisator">
+                                <strong>Réalisé par:</strong><br/>
+                                <span class="modal__director"></span>
+                            </div>
                         </div>
                         <button class="modal__cross" aria-label="Fermer le modal">❌</button>
                     </div>
 
-                    <div class="modal__realisator">
-                        <strong>Réalisé par:</strong><br/>
-                        <span class="modal__director"></span>
-                    </div>
-
                     <p class="modal__description"></p>
-                    <img class="modal__image" src="" alt="Affiche du film">
+
+                    <div class="modal__image-wrapper">
+                        <img class="modal__image" src="" alt="Affiche du film">
+                    </div>
 
                     <div class="modal__cast">
                         <strong>Avec :</strong><br/>
                         <span class="modal__actors"></span>
                     </div>
+
+                </div>
+
+                <div class="modal__button-wrapper">
+                    <button class="modal__close-button" aria-label="Fermer le modal">Fermer</button>
                 </div>
             </div>
         `;
@@ -35,8 +43,9 @@ export class FilmModal {
         document.body.appendChild(this.modal);
         this.modalContent = this.modal.querySelector(".modal__content");
 
-        // Fermer le modal en cliquant sur la croix
+        // Fermer le modal en cliquant sur la croix ou le bouton fermer
         this.modal.querySelector(".modal__cross").addEventListener("click", () => this.hide());
+        this.modal.querySelector(".modal__close-button").addEventListener("click", () => this.hide());
 
         // Fermer en cliquant en dehors du contenu
         this.modal.addEventListener("click", (event) => {

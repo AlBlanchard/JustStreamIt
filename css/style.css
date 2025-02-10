@@ -56,6 +56,8 @@ button{
 
 .header__logo {
     margin-top: 7px;
+    height: 100%;
+    width: auto;
 }
 
 .header__title {
@@ -384,9 +386,8 @@ button{
     background: white;
     width: 90vw;
     max-width: 600px;
-    min-height: 100vh; 
     border: 6px solid black;
-    padding: 28px 28px 28px 28px;
+    padding: 28px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     animation: modalTranslateIn 0.3s;
 }
@@ -409,21 +410,25 @@ button{
     font-weight: 600;
     flex: 1 1 auto;
     min-width: 0; /* Force l'ellipsis des flexbox */
+    div {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
 
-    h2 {
+.modal__title {
         line-height: 72px;
         font-size: 48px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
-    }
+}
 
-    div {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.modal__realisator {
+    font-size: 24px;
+    font-weight: 300;
 }
 
 .modal__cross {
@@ -446,16 +451,25 @@ button{
     margin-bottom: 16px;
 }
 
-.modal__image {
+.modal__image-wrapper {
     max-width: 100%;
     height: auto;
     margin: 10px 0;
+}
+
+.modal__image {
+    width: 100%;
+    height: auto;
 }
 
 .modal__info {
     list-style: none;
     padding: 0;
     text-align: left;
+}
+
+.modal__button-wrapper {
+    display: none;
 }
 
 @keyframes modalTranslateIn {

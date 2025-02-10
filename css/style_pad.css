@@ -34,7 +34,7 @@ main {
 
 .best-film__article {
     flex-direction: row;
-    aspect-ratio: unset;
+    aspect-ratio: 618/271;
 }
 
 .best-film__title {
@@ -54,6 +54,12 @@ main {
 
 .best-film__image-container {
     aspect-ratio: unset;
+    height: 100%;
+    width: auto;
+
+    img{
+        height: 100%;
+    }
 }
 
 .best-film__button {
