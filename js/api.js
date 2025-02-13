@@ -36,8 +36,10 @@ export async function fetchBestFilm() {
  * @returns {Promise<Array>} - Liste des meilleurs films.
  */
 export async function fetchTopRatedFilms() {
-    const data = await fetchAPI("/titles/?sort_by=-imdb_score&page_size=6");
-    return data?.results || []; // Retourne un tableau vide si aucune donnée
+    const data = await fetchAPI("/titles/?sort_by=-imdb_score&page_size=7");
+    const formatedData = data?.results?.slice(1, 8) || [];
+
+    return formatedData
 }
 
 /**
@@ -65,11 +67,11 @@ export async function fetchHomeCategories() {
 }
 
 /**
- * Récupère toutes les catégories de films (maximum 25).
+ * Récupère toutes les catégories de films.
  * @returns {Promise<Array>} - Liste des catégories disponibles.
  */
 export async function fetchCategories() {
-    const data = await fetchAPI("/genres/?page_size=25");
+    const data = await fetchAPI("/genres/?page_size=100"); // Limite haute fixée à 100
     return data?.results?.map(cat => cat.name) || [];
 }
 

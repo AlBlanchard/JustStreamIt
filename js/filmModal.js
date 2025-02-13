@@ -12,6 +12,7 @@ export class FilmModal {
                             <div><span class="modal__year"></span> - <span class="modal__genre"></span></div>
                             <div>PG-<span class="modal__PG"></span> - <span class="modal__duration"></span> <span class="modal__country"></span></div>
                             <div>IMDB score: <span class="modal__score"></span>/10</div>
+                            <div>Recettes au box-office: <span class="modal__box-office"></span></div>
 
                             <div class="modal__realisator">
                                 <strong>Réalisé par:</strong><br/>
@@ -65,6 +66,10 @@ export class FilmModal {
         const ratedValue = film.rated && !isNaN(film.rated) ? film.rated : "(Non classé)";
         const filmCountries = film.countries ? `(${film.countries.join(" / ")})` : "Non spécifié";
 
+        // Recettes box-office
+        const devise = film.budget_currency == "USD" ? "$" : film.worldwide_gross_income_currency;
+        const boxOffice = film.worldwide_gross_income ? `${film.worldwide_gross_income.toLocaleString("fr-FR")} ${devise}` : "Non spécifié";
+
         // Réinitialisation du scroll AVANT d'afficher le modal
         this.modal.scrollTop = 0; 
         this.modalContent.scrollTop = 0;
@@ -79,7 +84,9 @@ export class FilmModal {
         this.modal.querySelector(".modal__country").textContent = filmCountries;
         this.modal.querySelector(".modal__score").textContent = film.imdb_score;
         this.modal.querySelector(".modal__director").textContent = film.directors.join(", ");
-        this.modal.querySelector(".modal__actors").textContent = film.actors.slice(0, 5).join(", ");
+        this.modal.querySelector(".modal__actors").textContent = film.actors.join(", ");
+        this.modal.querySelector(".modal__box-office").textContent = boxOffice;
+
 
         this.modal.style.display = "flex";
         document.documentElement.style.overflow = "hidden"; // Désactive le scroll du body

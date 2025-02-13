@@ -1,4 +1,4 @@
-import { fetchBestFilm, fetchHomeCategories, fetchCategories, fetchTopRatedFilmsByCategory, fetchMovieDetails } from "./api.js";
+import { fetchBestFilm, fetchHomeCategories, fetchCategories, fetchTopRatedFilmsByCategory, fetchMovieDetails, fetchTopRatedFilms } from "./api.js";
 import { renderHomePage, htmlFilms, setupSeeMoreButtons } from "./ui.js";
 import { FilmModal } from "./filmModal.js";
 
@@ -8,10 +8,11 @@ import { FilmModal } from "./filmModal.js";
 async function loadHomePage() {
     try {
         const bestFilm = await fetchBestFilm();
+        const sixBestFilms = await fetchTopRatedFilms();
         const categories = await fetchHomeCategories();
         const allCategories = await fetchCategories();
 
-        renderHomePage(bestFilm, categories, allCategories);
+        renderHomePage(bestFilm, sixBestFilms, categories, allCategories);
     } catch (error) {
         console.error("Erreur lors du chargement de la page d'accueil :", error);
     }
@@ -23,8 +24,6 @@ async function loadHomePage() {
  */
 export async function loadSelectedCategory(categoryName) {
     try {
-        console.log(`Chargement des films pour la catégorie : ${categoryName}`);
-
         const films = await fetchTopRatedFilmsByCategory(categoryName);
         const categoryContainer = document.querySelector(".category--custom .category__film-list");
 
@@ -85,11 +84,3 @@ async function showFilmDetails(filmId) {
 document.addEventListener("DOMContentLoaded", router);
 window.addEventListener("popstate", router);
 window.showFilmDetails = showFilmDetails; // Essentiel pour le modal, rend accessible la fonction showFilmDetails dans le contexte global
-
-document.addEventListener("click", (event) => {
-    const target = event.target.closest("a");
-    if (target && target.href.startsWith(window.location.origin)) {
-        event.preventDefault(); // Empêche le chargement de la page
-        openModal(new URL(target.href).pathname);
-    }
-});

@@ -186,20 +186,24 @@ function activateDropDown() {
  * @param {Object} categories - Les films des deux catégories principales.
  * @param {Array} allCategories - Toutes les catégories disponibles.
  */
-export function renderHomePage(bestFilm = {}, categories = { primary: [], secondary: [], custom:[] }, allCategories = []) {
+export function renderHomePage(bestFilm = {}, sixBestFilms = [], categories = { primary: [], secondary: [], custom:[] }, allCategories = []) {
     const headerElement = document.querySelector(".header");
     const mainElement = document.querySelector(".main");
 
     if (headerElement) {
         headerElement.innerHTML = htmlHeader();
     } else {
-        console.warn("Élément '.header' non trouvé dans le DOM.");
+        console.warn("Elément '.header' non trouvé dans le DOM.");
     }
 
     if (mainElement) {
         const bestFilmHtml = Object.keys(bestFilm).length
             ? htmlBestFilmSection(bestFilm)
             : `<section class="best-film"><p>Aucun meilleur film disponible.</p></section>`;
+
+        const sixBestFilmsHtml = sixBestFilms.length
+            ? htmlCategorySection("Films les mieux notés", htmlFilms(sixBestFilms))
+            : `<section class="category"><p>Aucune donnée disponible pour les films les mieux notés.</p></section>`;
 
         const primaryCategoryHtml = categories.primary.length
             ? htmlCategorySection(CATEGORY_TRANSLATIONS[PRIMARY_CATEGORY], htmlFilms(categories.primary))
@@ -215,6 +219,7 @@ export function renderHomePage(bestFilm = {}, categories = { primary: [], second
 
         mainElement.innerHTML = `
             ${bestFilmHtml}
+            ${sixBestFilmsHtml}
             ${primaryCategoryHtml}
             ${secondaryCategoryHtml}
             ${customCategoryHtml}
@@ -278,8 +283,6 @@ function expandList(filmList) {
  * @param {HTMLElement} filmList - L'élément contenant les films
  */
 function collapseList(filmList) {
-    console.log("Début de l'animation de fermeture");
-
     // Hauteur fixe (2 films + gap) peu importe la taille d'écran
     const sampleFilm = filmList.querySelector(".category__film");
     if (!sampleFilm) return; // Sécurité si aucun film
@@ -295,8 +298,6 @@ function collapseList(filmList) {
     requestAnimationFrame(() => {
         // Récupérer combien de films doivent rester visibles
         const visibleCount = getVisibleFilmCount(); // Dynamique selon la taille de l'écran
-
-        console.log(`Hauteur ajustée pour ${visibleCount} films : ${initialHeight}px`);
 
         // Lancer l'animation de réduction
         filmList.style.transition = "max-height 1s ease-out";
