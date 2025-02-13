@@ -65,7 +65,7 @@ export class FilmModal {
         const ratedValue = film.rated && !isNaN(film.rated) ? film.rated : "(Non classé)";
         const filmCountries = film.countries ? `(${film.countries.join(" / ")})` : "Non spécifié";
 
-        // 🔥 Réinitialisation du scroll AVANT d'afficher le modal
+        // Réinitialisation du scroll AVANT d'afficher le modal
         this.modal.scrollTop = 0; 
         this.modalContent.scrollTop = 0;
 
